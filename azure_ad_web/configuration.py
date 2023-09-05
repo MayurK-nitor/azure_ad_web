@@ -1,7 +1,9 @@
-from configparser import ConfigParser
 import os
-from .constants import AuthorityType, ClientType
+from configparser import ConfigParser
 from types import SimpleNamespace
+
+from .constants import AuthorityType, ClientType
+
 
 class AADConfig(SimpleNamespace): # faster access to attributes with slots.
     @staticmethod
@@ -37,11 +39,6 @@ class AADConfig(SimpleNamespace): # faster access to attributes with slots.
 
         required = ['redirect_uri', 'scopes', 'response_type']
         for req in required: assert hasattr(parsed_config.auth_request, req)
-
-        # if ClientType(parsed_config.type.client_type) is ClientType.CONFIDENTIAL:
-        #     assert parsed_config.client.client_credential, (
-        #     "'client_credential' must be non-empty string if "
-        #     "'client_type' is ClientType.CONFIDENTIAL")
 
         if AuthorityType(parsed_config.type.authority_type) is AuthorityType.B2C:
             assert parsed_config.b2c, (

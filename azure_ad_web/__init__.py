@@ -1,37 +1,20 @@
-from msal import ConfidentialClientApplication, SerializableTokenCache
-from uuid import uuid4
+from functools import wraps
 from logging import Logger
 from typing import Any
-from functools import wraps
-from .context import IdentityContextData
+from uuid import uuid4
+
+from msal import ConfidentialClientApplication, SerializableTokenCache
+
+from .adapters import AzureIdentityWebContextAdapter
 from .constants import *
-from .adapters import IdentityWebContextAdapter
+from .context import AzureIdentityContextData
 from .errors import *
 
-# TODO: 
-#  ##### IMPORTANT #####
-# features:
-# - do configurations work on multi-threaded flask environment? if not, attach them to current_app. configurations aren't stateful so this may be a moot point?
-# - edit profile interaction required error on edit profile if no token_cache or expired?
-# - password reset should use login hint/no interaction?
-# - decorator for filter by security groups
-# - decorator for app roles RBAC
-# - auth failure handler to handle un-auth access?
-# - implement more client_type options (single and multi tenant)
-# - define django adapter: factor common adapter methods to a parent class that flask and django adapters inherit
-#
-# code quality:
-# - more try catch blocks around sensitive failure-prone methods for gracefule error-handling
-# 
-# ###### LOWER PRIORITY ##########
-# - remove any print statements
-# - replace is comparators with == ?
-# - cleanup / refactor constants file
 
 def require_context_adapter(f):
     @wraps(f)
     def assert_adapter(self, *args, **kwargs):
-        if not isinstance(self._adapter, IdentityWebContextAdapter) or not self._adapter.has_context:
+        if not isinstance(self._adapter, AzureIdentityWebContextAdapter) or not self._adapter.has_context:
             if self._logger:
                 self._logger.info(f"{self.__class__.__name__}.{f.__name__}: invalid adapter or no request context, aborting")
             else:
@@ -39,10 +22,10 @@ def require_context_adapter(f):
         return f(self, *args, **kwargs)
     return assert_adapter
         
-class IdentityWebPython(object):
+class AzureIdentityWebPython(object):
 
-    def __init__(self, aad_config: 'AADConfig', adapter: IdentityWebContextAdapter = None, logger: Logger = None) -> None:
-        self._logger = logger or Logger('IdentityWebPython')
+    def __init__(self, aad_config: 'AADConfig', adapter: AzureIdentityWebContextAdapter = None, logger: Logger = None) -> None:
+        self._logger = logger or Logger('AzureIdentityWebPython')
         self._adapter = None
         self.aad_config = aad_config
         if adapter is not None:
@@ -50,11 +33,11 @@ class IdentityWebPython(object):
 
     @property
     @require_context_adapter
-    def id_data(self) -> IdentityContextData:
+    def id_data(self) -> AzureIdentityContextData:
         return self._adapter.identity_context_data
     
     # TODO: make the call from the adapter to this and reverse the config process?
-    def set_adapter(self, adapter: IdentityWebContextAdapter) -> None:                
+    def set_adapter(self, adapter: AzureIdentityWebContextAdapter) -> None:                
         # if isinstance(adapter, FlaskContextAdapter):
         self._adapter = adapter
         adapter.attach_identity_web_util(self)
@@ -117,7 +100,7 @@ class IdentityWebPython(object):
                 # we should have a code. Now we must exchange the code for tokens.
                 result = self._x_change_auth_code_for_token(payload, cache, redirect_uri)
             else:
-                raise NotImplementedError(f"response_type {resp_type} is not yet implemented by ms_identity_web_python")
+                raise NotImplementedError(f"response_type {resp_type} is not yet implemented by azure_identity_web_python")
             self._process_result(result, cache)
             # self._verify_nonce() # one of the last steps TODO - is this required? msal python takes care of it?
         except AuthSecurityError as ase:
