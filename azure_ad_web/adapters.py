@@ -13,7 +13,7 @@ try:
 except:
     pass
 
-from .context import IdentityContextData
+from .context import AzureIdentityContextData
 from typing import Any
 from functools import wraps
 
@@ -27,8 +27,8 @@ def require_request_context(f):
             return f(self, *args, **kwargs)
     return assert_context
 
-class IdentityWebContextAdapter(metaclass=ABCMeta):
-    """Context Adapter abstract base class. Extend this to enable IdentityWebPython to
+class AzureIdentityWebContextAdapter(metaclass=ABCMeta):
+    """Context Adapter abstract base class. Extend this to enable AzureIdentityWebPython to
     work within any environment (e.g. Flask, Django, Windows Desktop app, etc) """
     @abstractmethod
     def __init__(self) -> None:
@@ -44,7 +44,7 @@ class IdentityWebContextAdapter(metaclass=ABCMeta):
 
     # TODO: make this dictionary key name configurable on app init
     @abstractmethod
-    def attach_identity_web_util(self, identity_web: 'IdentityWebPython') -> None:
+    def attach_identity_web_util(self, identity_web: 'AzureIdentityWebPython') -> None:
         pass
 
     @abstractmethod # @property
@@ -53,7 +53,7 @@ class IdentityWebContextAdapter(metaclass=ABCMeta):
     
     @abstractmethod # @property
     @require_request_context
-    def identity_context_data(self) -> 'IdentityContextData':
+    def identity_context_data(self) -> 'AzureIdentityContextData':
         pass
     
 
@@ -92,7 +92,7 @@ class IdentityWebContextAdapter(metaclass=ABCMeta):
 
     @abstractmethod
     @require_request_context
-    def _deserialize_identity_context_data_from_session(self) -> 'IdentityContextData':
+    def _deserialize_identity_context_data_from_session(self) -> 'AzureIdentityContextData':
         pass
 
     @abstractmethod
@@ -100,8 +100,8 @@ class IdentityWebContextAdapter(metaclass=ABCMeta):
     def _serialize_identity_context_data_to_session(self) -> None:
         pass
 
-class FlaskContextAdapter(IdentityWebContextAdapter):
-    """Context Adapter to enable IdentityWebPython to work within the Flask environment"""
+class FlaskContextAdapter(AzureIdentityWebContextAdapter):
+    """Context Adapter to enable AzureIdentityWebPython to work within the Flask environment"""
     def __init__(self, app) -> None:
         assert isinstance(app, flask_app)
         super().__init__()
@@ -113,13 +113,13 @@ class FlaskContextAdapter(IdentityWebContextAdapter):
 
     @property
     @require_request_context
-    def identity_context_data(self) -> 'IdentityContextData':
+    def identity_context_data(self) -> 'AzureIdentityContextData':
         # TODO: make the key name configurable
         self.logger.debug("Getting identity_context from g")
-        identity_context_data = flask_g.get(IdentityContextData.SESSION_KEY)
+        identity_context_data = flask_g.get(AzureIdentityContextData.SESSION_KEY)
         if not identity_context_data:
             identity_context_data = self._deserialize_identity_context_data_from_session()
-            setattr(flask_g, IdentityContextData.SESSION_KEY, identity_context_data)
+            setattr(flask_g, AzureIdentityContextData.SESSION_KEY, identity_context_data)
         return identity_context_data
 
     # method is called when flask gets an app/request context
@@ -133,7 +133,7 @@ class FlaskContextAdapter(IdentityWebContextAdapter):
     # this is for saving any changes to the identity_context_data
     def _on_request_end(self, response_to_return=None) -> None:
         try:
-            if IdentityContextData.SESSION_KEY in flask_g:
+            if AzureIdentityContextData.SESSION_KEY in flask_g:
                 self._serialize_identity_context_data_to_session()
         except Exception as ex:
             self.logger.error(f'flask adapter failed @ _on_request_ended\n{ex}')
@@ -141,9 +141,9 @@ class FlaskContextAdapter(IdentityWebContextAdapter):
         return response_to_return
 
     # TODO: order is reveresed? create id web first, then attach flask adapter to it!?
-    def attach_identity_web_util(self, identity_web: 'IdentityWebPython') -> None:
+    def attach_identity_web_util(self, identity_web: 'AzureIdentityWebPython') -> None:
         """attach the identity web instance to session so it is accessible everywhere.
-        e.g., ms_id_web = current_app.config.get("ms_identity_web")\n
+        e.g., ms_id_web = current_app.config.get("azure_identity_web")\n
         Also attaches the application logger."""
         aad_config = identity_web.aad_config
         config_key = aad_config.flask.id_web_configs
@@ -191,10 +191,10 @@ class FlaskContextAdapter(IdentityWebContextAdapter):
 
     # does this need to be public method?
     @require_request_context
-    def _deserialize_identity_context_data_from_session(self) -> 'IdentityContextData':
-        new_id_context_data = IdentityContextData()
+    def _deserialize_identity_context_data_from_session(self) -> 'AzureIdentityContextData':
+        new_id_context_data = AzureIdentityContextData()
         try:
-            id_context_from_session = self.session.get(IdentityContextData.SESSION_KEY, dict())
+            id_context_from_session = self.session.get(AzureIdentityContextData.SESSION_KEY, dict())
             new_id_context_data.__dict__.update(id_context_from_session)
         except Exception as exception:
             self.logger.warning(f"failed to deserialize identity context from session: creating empty one\n{exception}")
@@ -208,43 +208,9 @@ class FlaskContextAdapter(IdentityWebContextAdapter):
             if identity_context.has_changed:
                 identity_context.has_changed = False
                 identity_context = identity_context.__dict__
-                self.session[IdentityContextData.SESSION_KEY] = identity_context
+                self.session[AzureIdentityContextData.SESSION_KEY] = identity_context
         except Exception as exception:
             self.logger.error(f"failed to serialize identity context to session.\n{exception}")
 
     
 
-
-
-
-
-
-# the following class is incomplete
-class DjangoContextAdapter(object):
-    """Context Adapter to enable IdentityWebPython to work within the Django environment"""
-    def __init__(self):
-        raise NotImplementedError("not yet implemented")
-
-    # method is called when getting app/request context
-    def _on_context_init(self) -> None:
-        self._has_context = True
-    
-    def _on_context_teardown(self, exception) -> None: 
-        self._has_context = False
-        if self.identity_context_data.has_changed:
-            self.identity_context_data._save_to_session()
-
-    # this function returns Django's request params.
-    @require_request_context
-    def get_request_params_as_dict(self, request: 'request' = None) -> dict:
-        try:
-            if request.method == "GET":
-                return request.GET.dict()
-            elif request.method == "POST" :
-                return request.POST.dict()
-            else:
-                raise ValueError("Django request must be POST or GET")
-        except:
-            if self.logger is not None:
-                self.logger.warning("Failed to get param dict, substituting empty dict instead")
-            return dict()
