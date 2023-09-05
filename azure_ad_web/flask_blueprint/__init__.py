@@ -1,11 +1,5 @@
-from flask import (
-    Blueprint, redirect,
-    url_for,
-    current_app,
-    g,
-    session,
-    request,
-    )
+from flask import (Blueprint, current_app, g, redirect, request, session,
+                   url_for)
 
 # TODO: redirect(url_for('index')) is too opinionated. user must be able to choose
 
