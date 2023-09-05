@@ -1,7 +1,9 @@
-from configparser import ConfigParser
 import os
-from .constants import AuthorityType, ClientType
+from configparser import ConfigParser
 from types import SimpleNamespace
+
+from .constants import AuthorityType, ClientType
+
 
 class AADConfig(SimpleNamespace): # faster access to attributes with slots.
     @staticmethod

@@ -1,10 +1,12 @@
 try:
-    from azure_ad_web import AzureIdentityWebPython
-    from azure_ad_web.context import AzureIdentityContextData
-    from azure_ad_web.adapters import AzureIdentityWebContextAdapter
+    import logging
+
     from django.http.request import HttpRequest as DjangoHttpRequest
     from django.shortcuts import redirect as django_redirect
-    import logging
+
+    from azure_ad_web import AzureIdentityWebPython
+    from azure_ad_web.adapters import AzureIdentityWebContextAdapter
+    from azure_ad_web.context import AzureIdentityContextData
 except:
     pass
 

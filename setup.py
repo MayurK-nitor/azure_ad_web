@@ -1,6 +1,5 @@
 import setuptools
 
-
 setuptools.setup(
     name="azure_ad_web",
     version="0.0.1",

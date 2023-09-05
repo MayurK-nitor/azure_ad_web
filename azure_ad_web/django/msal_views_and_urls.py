@@ -1,10 +1,10 @@
 try:
-    from django.urls import path
     from django.shortcuts import redirect
-    from django.urls import reverse
+    from django.urls import path, reverse
 except:
     pass
 import logging
+
 
 class MsalViews:
     def __init__(self, azure_identity_web):

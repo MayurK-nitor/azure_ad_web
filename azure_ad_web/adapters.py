@@ -1,21 +1,24 @@
 from abc import ABCMeta, abstractmethod
+
 try:
-    from flask import (
-        Flask as flask_app,
-        has_request_context as flask_has_request_context,
-        session as flask_session,
-        request as flask_request,
-        redirect as flask_redirect,
-        g as flask_g,
-        url_for as flask_url_for
-        )
-    from .flask_blueprint import FlaskAADEndpoints # this is where our auth-related endpoints are defined
+    from flask import Flask as flask_app
+    from flask import g as flask_g
+    from flask import has_request_context as flask_has_request_context
+    from flask import redirect as flask_redirect
+    from flask import request as flask_request
+    from flask import session as flask_session
+    from flask import url_for as flask_url_for
+
+    from .flask_blueprint import \
+        FlaskAADEndpoints  # this is where our auth-related endpoints are defined
 except:
     pass
 
-from .context import AzureIdentityContextData
-from typing import Any
 from functools import wraps
+from typing import Any
+
+from .context import AzureIdentityContextData
+
 
 # decorator to make sure access within request context
 def require_request_context(f):

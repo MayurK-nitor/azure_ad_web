@@ -1,7 +1,8 @@
 try:    
-    from azure_ad_web.errors import NotAuthenticatedError
     from django.conf import settings
     from django.shortcuts import render
+
+    from azure_ad_web.errors import NotAuthenticatedError
 except:
     pass
 

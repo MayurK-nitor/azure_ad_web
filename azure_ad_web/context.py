@@ -1,5 +1,6 @@
-from msal import SerializableTokenCache
 import json
+
+from msal import SerializableTokenCache
 
 # TODO: make this a @dataclass ?
 

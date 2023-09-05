@@ -1,11 +1,13 @@
-from msal import ConfidentialClientApplication, SerializableTokenCache
-from uuid import uuid4
+from functools import wraps
 from logging import Logger
 from typing import Any
-from functools import wraps
-from .context import AzureIdentityContextData
-from .constants import *
+from uuid import uuid4
+
+from msal import ConfidentialClientApplication, SerializableTokenCache
+
 from .adapters import AzureIdentityWebContextAdapter
+from .constants import *
+from .context import AzureIdentityContextData
 from .errors import *
 
 

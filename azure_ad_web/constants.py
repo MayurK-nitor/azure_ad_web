@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 ### AZURE AD AUTH OPTIONS ###
 class ResponseType(Enum):
     def __str__(self):
