@@ -40,16 +40,22 @@
         <ul class="nav navbar-nav">
         </ul>
 
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <a href="#">
-              <span class="glyphicon" aria-hidden="true"></span>&nbsp; Logged in as:
-              {{ get_full_name|title }}
-            </a>
-          </li>
-          <li>
-          </li>
-        </ul>
+
+        {% if g.identity_context_data.authenticated %}
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="#">
+                <span class="glyphicon" aria-hidden="true"></span>&nbsp; Logged in as:
+                {{ g.identity_context_data.username|title }}
+              </a>
+            </li>
+            <li>
+              <a href="{{ url_for('auth.sign_out')}}">
+                <span class="glyphicon" aria-hidden="true"></span>&nbsp; Logout
+              </a>
+            </li>
+          </ul>
+        {% endif %}
       </div>
     </div>
   </nav>

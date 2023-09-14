@@ -27,7 +27,7 @@
                     <div class="form-group">
                         <div class="col-sm-offset-0 col-sm-12">
                             <!-- NOTE  -azure-ad-login-->
-                            <a href="#" class="btn btn-warning col-sm-12">
+                            <a href="{{ url_for('auth.sign_in') }}" class="btn btn-warning col-sm-12">
                                 <span style="display:inline-block;">
                                     <img src="{{ url_for('static', filename='azure_ad_api/images/Microsoft_logo.png') }}" alt="Microsoft Logo" width="60%" height="60%"/>
                                 </span>&nbsp;Login with Microsoft

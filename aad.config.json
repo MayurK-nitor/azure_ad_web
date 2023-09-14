@@ -2,19 +2,18 @@
     "type": {
         "client_type": "CONFIDENTIAL",
         "authority_type": "SINGLE_TENANT",
-        "framework": "DJANGO"
+        "framework": "FLASK"
     },
     "client": {
-        "client_id": "enter-your-client-id-here",
-        "client_credential": "enter-your-client-secret-here",
-        "authority": "https://login.microsoftonline.com/enter-your-tenant-id-here"
+        "client_id": "dff36c9c-bff1-433c-a4a4-935239b37b04",
+        "client_credential": "3mq8Q~XPlhwUIdUp_VmK8TTAScWKpzmbelTylbqv",
+        "authority": "https://login.microsoftonline.com/8c3dad1d-b6bc-4f8b-939b-8263372eced6"
     },
     "auth_request": {
         "redirect_uri": null,
         "scopes": [],
         "response_type": "code"
     },
-    "flask": null,
     "django": {
         "id_web_configs": "MS_ID_WEB_CONFIGS",
         "auth_endpoints": {
@@ -24,6 +23,17 @@
             "redirect": "redirect",
             "sign_out": "sign_out",
             "post_sign_out": "post_sign_out"
+        }
+    },
+    "flask": {
+        "id_web_configs": "MS_ID_WEB_CONFIGS",
+        "auth_endpoints": {
+            "prefix": "/auth",
+            "sign_in": "/sign_in",
+            "edit_profile": "/edit_profile",
+            "redirect": "/redirect",
+            "sign_out": "/sign_out",
+            "post_sign_out": "/post_sign_out"
         }
     }
 }
