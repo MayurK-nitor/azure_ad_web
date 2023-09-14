@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ super() }} | Log In {% endblock %}
+{% block login_active %}active{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid">
+    <br><br><br><br><br><br><br><br><br><br>
+    <div class="row">
+        <div class="col-sm-12 col-md-4">
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 style="text-align:center;"><strong>LOGIN </strong></h3>
+                </div>
+                <div class="panel-body">
+                    <div class="col-md-6">
+                        {% if error_message %}
+                            <div class="messages">
+                                <label id="error_message-label" style="color: red;">{{ error_message }}</label>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="col-sm-offset-0 col-sm-12">
+                            <!-- NOTE  -azure-ad-login-->
+                            <a href="#" class="btn btn-warning col-sm-12">
+                                <span style="display:inline-block;">
+                                    <img src="{{ url_for('static', filename='azure_ad_api/images/Microsoft_logo.png') }}" alt="Microsoft Logo" width="60%" height="60%"/>
+                                </span>&nbsp;Login with Microsoft
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-4">
+        </div>
+    </div>
+</div>
+
+{% endblock %}
