@@ -17,7 +17,7 @@ RUN apk update && apk add git
 RUN pip install -r requirements.txt
 
 # Expose a port (if needed)
-EXPOSE 3000
+EXPOSE 5000
 
 # Define the command to run your application
 CMD python ./app.py

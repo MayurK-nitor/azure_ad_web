@@ -6,10 +6,13 @@ from flask import (Flask, g, redirect, render_template, request, session,
 
 import app_config
 from flask_session import Session
+import os
+SECRET_KEY = os.environ.get('SECRET_KEY')
+DEBUG = os.environ.get('DEBUG')
 
 app = Flask(__name__)
 app.config.from_object(app_config) # load Flask configuration file (e.g., session configs)
-app.secret_key = "your_secret_key"
+app.secret_key = SECRET_KEY
 Session(app) # init the serverside session for the app: this is requireddue to large cookie size
 
 
@@ -30,4 +33,4 @@ def index():
     return render_template('azure_ad_api/index.html')
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=int("3000"), debug=True,)
+    app.run(host="0.0.0.0", port=int("5000"), debug=DEBUG,)
