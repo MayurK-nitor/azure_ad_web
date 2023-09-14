@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, session, g
-from flask_session import Session
-import app_config
 from azure_ad_web import IdentityWebPython
 from azure_ad_web.adapters import FlaskContextAdapter
 from azure_ad_web.configuration import AADConfig
+from flask import (Flask, g, redirect, render_template, request, session,
+                   url_for)
+
+import app_config
+from flask_session import Session
 
 app = Flask(__name__)
 app.config.from_object(app_config) # load Flask configuration file (e.g., session configs)
