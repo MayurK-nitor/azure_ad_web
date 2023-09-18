@@ -20,6 +20,7 @@ parts/
 sdist/
 var/
 wheels/
+
 share/python-wheels/
 *.egg-info/
 .installed.cfg
@@ -64,6 +65,8 @@ db.sqlite3-journal
 # Flask stuff:
 instance/
 .webassets-cache
+flask_session/
+.flaskvenv/
 
 # Scrapy stuff:
 .scrapy

@@ -33,7 +33,8 @@
             "edit_profile": "/edit_profile",
             "redirect": "/redirect",
             "sign_out": "/sign_out",
-            "post_sign_out": "/post_sign_out"
+            "post_sign_out": "/post_sign_out",
+            "post_sign_in": "http://localhost:8000/index_"
         }
     }
 }
