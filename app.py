@@ -1,13 +1,19 @@
 from azure_ad_web import IdentityWebPython
 from azure_ad_web.adapters import FlaskContextAdapter
 from azure_ad_web.configuration import AADConfig
-from flask import (Flask, g, redirect, render_template, request, session,
-                   url_for)
+from cryptography.fernet import Fernet
+from flask import (Flask, g, make_response, redirect, render_template, request,
+                   session, url_for)
+
+key = b'85m-3ExDEz2wCCNERphWTMVJH29tLn-TEa4DpyDRCWM='
+cipher_suite = Fernet(key)
+
+import json
+import os
 
 import app_config
 from flask_session import Session
-import os
-import json
+
 SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = True
 
@@ -29,21 +35,23 @@ source_url = None
 def login_user():
     current_url = request.args.get('current_url')
     session['current_url'] = current_url
-    print('current_url', current_url)
-    # return render_template('azure_ad_api/login.html')
     return redirect(f'auth/sign_in?current_url={current_url}')
 
 @app.route('/index/')
 # @azure_identity_web.login_required
 def index():
-    print('inside app.py index view')
     if 'current_url' in session:
         current_url = session['current_url']
         identity_context_data = session['identity_context_data']
         identity_context_data = json.dumps(identity_context_data)
-        # print('identity_context_data',identity_context_data)
-        print('session', session.keys())
-        return redirect(current_url+'?identity_context_data='+identity_context_data)
+
+        # Encrypt the parameter
+        encrypted_data = cipher_suite.encrypt(identity_context_data.encode()).decode()
+
+        # Append the encrypted parameter to the URL
+        url_with_param = f"{current_url}?identity_context_data={encrypted_data}"
+
+        return redirect(url_with_param)
     return render_template('azure_ad_api/index.html')
 
 if __name__ == '__main__':

@@ -10,9 +10,6 @@ COPY . /app
 # Install Git
 RUN apk update && apk add git
 
-# Set your GitHub PAT as an environment variable
-# ENV GITHUB_TOKEN=<your_github_pat_here>
-
 # Install the Python packages from requirements.txt
 RUN pip install -r requirements.txt
 

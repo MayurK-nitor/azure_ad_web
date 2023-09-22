@@ -1,0 +1,31 @@
+#steps for running flask service
+step 1: Take a pull of Azure ad web Flask service
+
+Our flask service will act as integrated application of your application. So we have dockerize our flask application so we will prefer that you can use our docker file as per your needs.
+
+step 2: Configure add.config.json to set custom client_id, client_credential, tenant_id of your registered azure app
+
+"client": {
+        "client_id": "client_id",
+        "client_credential": "client_credential",
+        "authority": "https://login.microsoftonline.com/tenant_id"
+    },
+
+step 2: Docker
+    (i)Build the docker image and run the container using this command `docker-compose up -d --build`
+    (ii)check containers status using this command `docker-compose ps`
+    (iii)To down the container service using this command `docker-compose down`
+
+#
+#In User's app/project
+1)Explanation of add.config.json  -consumed by flask service
+2)While getting the response use below ENCRYPTION_KEY=b'85m-3ExDEz2wCCNERphWTMVJH29tLn-TEa4DpyDRCWM=' to decrypt data('identity_context_data)
+
+    for eg. if your using python then you  can use below code snippet to decrypt
+
+    from cryptography.fernet import Fernet
+    encryption_key = b'85m-3ExDEz2wCCNERphWTMVJH29tLn-TEa4DpyDRCWM='
+    cipher_suite = Fernet(encryption_key)
+
+    # Decrypt the parameter
+    identity_context_data = cipher_suite.decrypt(identity_context_data.encode()).decode()
