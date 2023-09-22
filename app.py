@@ -52,7 +52,6 @@ def index():
         url_with_param = f"{current_url}?identity_context_data={encrypted_data}"
 
         return redirect(url_with_param)
-    return render_template('azure_ad_api/index.html')
-
+    
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=int("5000"), debug=DEBUG,)

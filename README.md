@@ -38,6 +38,14 @@ docker-compose down
 
 ##### 3. In your Project build on any coding platform
 
+In order to login using azure active directory you will need to make a request on ```auth/sign_in``` with ```current_url``` as parameter.
+
+for eg.
+```
+http://localhost:5000/auth/sign_in?current_url={{current_url}}
+```
+As a part of response, you will get response on your ```index``` url in ```identity_context_data``` parameter in encrypted format.
+
 While getting the response use below encryption key to decrypt data('identity_context_data)
 ```
 ENCRYPTION_KEY=b'85m-3ExDEz2wCCNERphWTMVJH29tLn-TEa4DpyDRCWM=' 
