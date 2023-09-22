@@ -5,6 +5,8 @@ Our flask service will act as integrated application of your application. So we 
 
 step 2: Configure add.config.json to set custom client_id, client_credential, tenant_id of your registered azure app
 
+eg. In add.config.json
+
 "client": {
         "client_id": "client_id",
         "client_credential": "client_credential",
@@ -21,11 +23,18 @@ step 2: Docker
 1)Explanation of add.config.json  -consumed by flask service
 2)While getting the response use below ENCRYPTION_KEY=b'85m-3ExDEz2wCCNERphWTMVJH29tLn-TEa4DpyDRCWM=' to decrypt data('identity_context_data)
 
-    for eg. if your using python then you  can use below code snippet to decrypt
+    for eg. In python, we can use cryptography module for ecryption and decryption.
+    so we can install the cryptography module and then we can use below code snippet to decrypt.
 
+    ```
+    pip install cryptography
+    ```
+
+    ```
     from cryptography.fernet import Fernet
     encryption_key = b'85m-3ExDEz2wCCNERphWTMVJH29tLn-TEa4DpyDRCWM='
     cipher_suite = Fernet(encryption_key)
 
-    # Decrypt the parameter
+    #To Decrypt the parameter
     identity_context_data = cipher_suite.decrypt(identity_context_data.encode()).decode()
+    ```
