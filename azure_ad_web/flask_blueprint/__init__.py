@@ -20,6 +20,8 @@ class FlaskAADEndpoints(Blueprint):
 
         @self.route(endpoints.sign_in)
         def sign_in():
+            current_url = request.args.get('current_url')
+            session['current_url'] = current_url
             post_sign_in_url = request.values.get('post_sign_in_url', None)
             logger.debug(f"{name}{endpoints.sign_in}: request received. will redirect browser to login")
             if post_sign_in_url:
@@ -53,7 +55,7 @@ class FlaskAADEndpoints(Blueprint):
         def post_sign_out():
             logger.debug(f"{name}{endpoints.post_sign_out}: clearing session for username: {g.identity_context_data.username}")
             id_web.remove_user(g.identity_context_data.username)  # remove user auth from session on successful logout
-            return redirect(url_for('index'))                   # take us back to the home page
+            return redirect(url_for('index'))   #take us back to the home page
         
     def url_for(self, destination, _external=False):
         return url_for(f'{self.name}.{destination}', _external=_external)
