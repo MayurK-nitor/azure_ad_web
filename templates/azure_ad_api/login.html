@@ -1,9 +1,18 @@
 {% extends 'base.html' %}
-
-{% block title %}{{ super() }} | Log In {% endblock %}
+{% load static %}
+{% block title %}{{block.super}} | Log In {% endblock %}
 {% block login_active %}active{% endblock %}
 
 {% block body %}
+<script>
+    // Hide the message after 10 seconds
+    setTimeout(function() {
+        var errorMessageLabel = document.getElementById('error_message-label');
+        if (errorMessageLabel) {
+            errorMessageLabel.style.display = 'none';
+        }
+    }, 10000);
+</script>
 
 <div class="container-fluid">
     <br><br><br><br><br><br><br><br><br><br>
@@ -27,9 +36,9 @@
                     <div class="form-group">
                         <div class="col-sm-offset-0 col-sm-12">
                             <!-- NOTE  -azure-ad-login-->
-                            <a href="{{ url_for('auth.sign_in') }}" class="btn btn-warning col-sm-12">
+                            <a href="http://localhost:5000/auth/sign_in?current_url={{current_url}}" class="btn btn-warning col-sm-12">
                                 <span style="display:inline-block;">
-                                    <img src="{{ url_for('static', filename='azure_ad_api/images/Microsoft_logo.png') }}" alt="Microsoft Logo" width="60%" height="60%"/>
+                                    <img src="{% static 'azure_ad_api/images/Microsoft_logo.png' %}" alt="Microsoft Logo" width="60%" height="60%"/>
                                 </span>&nbsp;Login with Microsoft
                             </a>
                         </div>
