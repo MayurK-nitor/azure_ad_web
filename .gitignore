@@ -67,6 +67,7 @@ instance/
 .webassets-cache
 flask_session/
 .flaskvenv/
+.flskvenv/
 
 # Scrapy stuff:
 .scrapy

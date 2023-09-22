@@ -68,13 +68,13 @@ identity_context_data = cipher_suite.decrypt(identity_context_data.encode()).dec
 
 #### flask_blueprint
 - a class that implements all aad-specific endpoints. support for multiple instances with different prefixes if necessary
-- all bindings are automatic with flaskcontextadapter
+- all bindings are automatic with ```flaskcontextadapter```
 #### adapters.py
-- FlaskContextAdapter for handling interaction between the API and flask context (e.g. session, request)
+- ```FlaskContextAdapter``` for handling interaction between the API and flask context (e.g. session, request)
 - An ABC defining the interface for writing more adapters
 - Should be re-organised into folders on a per-framework basis?
 #### context.py
-- IdentityContext class that holds ID-specific info (simple class with attributes and has_changed function for write-to-session decision)
+- ```IdentityContext``` class that holds ID-specific info (simple class with attributes and has_changed function for write-to-session decision)
 #### configuration.py
 - simple configuration parser and sanity checker
 #### constants.py
