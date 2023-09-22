@@ -20,6 +20,8 @@ class FlaskAADEndpoints(Blueprint):
 
         @self.route(endpoints.sign_in)
         def sign_in():
+            current_url = request.args.get('current_url')
+            session['current_url'] = current_url
             post_sign_in_url = request.values.get('post_sign_in_url', None)
             logger.debug(f"{name}{endpoints.sign_in}: request received. will redirect browser to login")
             if post_sign_in_url:
