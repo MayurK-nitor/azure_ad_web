@@ -1,9 +1,10 @@
-from msal import SerializableTokenCache
 import json
+
+from msal import SerializableTokenCache
 
 # TODO: make this a @dataclass ?
 
-class IdentityContextData(object):
+class AzureIdentityContextData(object):
     SESSION_KEY='identity_context_data' #TODO: make configurable
 
     def __init__(self) -> None:

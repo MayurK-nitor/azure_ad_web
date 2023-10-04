@@ -73,7 +73,7 @@ pip install git+ssh://git@github.com/MayurK-nitor/azure_ad_web/@feature/generic-
 
 don't forget to import the required modules into your application as necessary:
 ```
-from azure_ad_web import IdentityWebPython
+from azure_ad_web import AzureIdentityWebPython
 from azure_ad_web.adapters import FlaskContextAdapter
 from azure_ad_web.configuration import AADConfig
 ```
@@ -81,13 +81,13 @@ from azure_ad_web.configuration import AADConfig
 hook up the utils to your flask app:
 ```
 adapter = FlaskContextAdapter(app)    # we are using flask
-ms_identity_web = IdentityWebPython(AADConfig.parse_json('aad.config.json'), adapter) # instantiate utils
+azure_identity_web = AzureIdentityWebPython(AADConfig.parse_json('aad.config.json'), adapter) # instantiate utils
 ```
 
-add the @ms_identity_web.login_required decorator to protect your routes:
+add the @azure_identity_web.login_required decorator to protect your routes:
 ```
 @app.route('/my_protected_route')
-@ms_identity_web.login_required # <-- developer only needs to hook up this decorator to any login_required endpoint like this
+@azure_identity_web.login_required # <-- developer only needs to hook up this decorator to any login_required endpoint like this
 def my_protected_route():
     return render_template('my_protected_route.html')
 ```

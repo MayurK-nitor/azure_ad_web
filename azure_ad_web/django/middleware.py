@@ -1,19 +1,20 @@
 try:    
-    from azure_ad_web.errors import NotAuthenticatedError
     from django.conf import settings
     from django.shortcuts import render
+
+    from azure_ad_web.errors import NotAuthenticatedError
 except:
     pass
 
 from .adapter import DjangoContextAdapter
 
-ms_identity_web = settings.MS_IDENTITY_WEB
+azure_identity_web = settings.AZURE_IDENTITY_WEB
 
-class MsalMiddleware:
+class AzureMsalMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
         # One-time configuration and initialization.
-        self.ms_identity_web = ms_identity_web
+        self.azure_identity_web = azure_identity_web
     
     def process_exception(self, request, exception):
         if isinstance(exception, NotAuthenticatedError):
@@ -26,7 +27,7 @@ class MsalMiddleware:
         # the view (and later middleware) are called.
 
         django_context_adapter = DjangoContextAdapter(request)
-        self.ms_identity_web.set_adapter(django_context_adapter)
+        self.azure_identity_web.set_adapter(django_context_adapter)
         django_context_adapter._on_request_init()
         
         response = self.get_response(request)

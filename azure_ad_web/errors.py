@@ -23,8 +23,8 @@ class B2CPasswordError(AuthError):
     description = "password reset/redirect"
 
 try:
-    from werkzeug.exceptions import HTTPException
     from flask import request
+    from werkzeug.exceptions import HTTPException
     class NotAuthenticatedError(HTTPException, AuthError):
         """Flask HTTPException Error + IdWebPy AuthError: User is not authenticated."""
         code = 401

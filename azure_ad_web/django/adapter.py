@@ -1,15 +1,17 @@
 try:
-    from azure_ad_web import IdentityWebPython
-    from azure_ad_web.context import IdentityContextData
-    from azure_ad_web.adapters import IdentityWebContextAdapter
+    import logging
+
     from django.http.request import HttpRequest as DjangoHttpRequest
     from django.shortcuts import redirect as django_redirect
-    import logging
+
+    from azure_ad_web import AzureIdentityWebPython
+    from azure_ad_web.adapters import AzureIdentityWebContextAdapter
+    from azure_ad_web.context import AzureIdentityContextData
 except:
     pass
 
-class DjangoContextAdapter(IdentityWebContextAdapter):
-    """Context Adapter to enable IdentityWebPython to work within the Django environment"""
+class DjangoContextAdapter(AzureIdentityWebContextAdapter):
+    """Context Adapter to enable AzureIdentityWebPython to work within the Django environment"""
     def __init__(self, request: 'DjangoHttpRequest') -> None:
         # TODO: remove the following and add a middleware loaded before this one for global request/session context?
         self.request = request
@@ -17,13 +19,13 @@ class DjangoContextAdapter(IdentityWebContextAdapter):
         self.logger = logging.getLogger('MsalMiddleWareLogger')
 
     @property
-    def identity_context_data(self) -> 'IdentityContextData':
+    def identity_context_data(self) -> 'AzureIdentityContextData':
         # TODO: make the key name configurable
         self.logger.debug("Getting identity_context from request/session")
-        identity_context_data = getattr(self.request, IdentityContextData.SESSION_KEY, None)
+        identity_context_data = getattr(self.request, AzureIdentityContextData.SESSION_KEY, None)
         if not identity_context_data:
             identity_context_data = self._deserialize_identity_context_data_from_session()
-            setattr(self.request, IdentityContextData.SESSION_KEY, identity_context_data)
+            setattr(self.request, AzureIdentityContextData.SESSION_KEY, identity_context_data)
         return identity_context_data
 
     def _on_request_init(self) -> None:
@@ -35,15 +37,15 @@ class DjangoContextAdapter(IdentityWebContextAdapter):
     # this is for saving any changes to the identity_context_data
     def _on_request_end(self) -> None:
         try:
-            if getattr(self.request, IdentityContextData.SESSION_KEY, None):
+            if getattr(self.request, AzureIdentityContextData.SESSION_KEY, None):
                 self._serialize_identity_context_data_to_session()
         except Exception as ex:
             self.logger.error(f'MsalMiddleware failed @ _on_request_ended\n{ex}')
 
     # TODO: order is reveresed? create id web first, then attach django adapter to it!?
-    def attach_identity_web_util(self, identity_web: 'IdentityWebPython') -> None:
+    def attach_identity_web_util(self, identity_web: 'AzureIdentityWebPython') -> None:
         """attach the identity web instance somewhere so it is accessible everywhere.
-        e.g., ms_identity_web = current_app.config.get("ms_identity_web")\n
+        e.g., azure_identity_web = current_app.config.get("azure_identity_web")\n
         Also attaches the application logger."""
         aad_config = identity_web.aad_config
         config_key = aad_config.django.id_web_configs
@@ -82,10 +84,10 @@ class DjangoContextAdapter(IdentityWebContextAdapter):
             return dict()
 
     # does this need to be public method?
-    def _deserialize_identity_context_data_from_session(self) -> 'IdentityContextData':
-        blank_id_context_data = IdentityContextData()
+    def _deserialize_identity_context_data_from_session(self) -> 'AzureIdentityContextData':
+        blank_id_context_data = AzureIdentityContextData()
         try:
-            id_context_from_session = self.session.get(IdentityContextData.SESSION_KEY, dict())
+            id_context_from_session = self.session.get(AzureIdentityContextData.SESSION_KEY, dict())
             blank_id_context_data.__dict__.update(id_context_from_session)
         except Exception as exception:
             self.logger.warning(f"failed to deserialize identity context from session: creating empty one\n{exception}")
@@ -98,6 +100,6 @@ class DjangoContextAdapter(IdentityWebContextAdapter):
             if identity_context.has_changed:
                 identity_context.has_changed = False
                 identity_context = identity_context.__dict__
-                self.session[IdentityContextData.SESSION_KEY] = identity_context
+                self.session[AzureIdentityContextData.SESSION_KEY] = identity_context
         except Exception as exception:
             self.logger.error(f"failed to serialize identity context to session.\n{exception}")
