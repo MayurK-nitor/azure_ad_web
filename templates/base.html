@@ -40,7 +40,7 @@
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
         </ul>
-
+        {% if get_full_name %}
         <ul class="nav navbar-nav navbar-right">
           <li>
             <a href="#">
@@ -48,7 +48,13 @@
               {{get_full_name|title }}
             </a>
           </li>
+          <li>
+            <a href="http://localhost:5000/auth/sign_out">
+              <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp; Azure Sign Out
+            </a>
+          </li>
         </ul>
+        {% endif %}
       </div>
     </div>
   </nav>
